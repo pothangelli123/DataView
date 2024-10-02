@@ -10,9 +10,10 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "xml2js": "^0.4.23",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
-    "body-parser": "^1.19.0"
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "netlify-cli": "^3.39.4"

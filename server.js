@@ -17,6 +17,12 @@ app.use(cors({
   credentials: true
 }));
 
+// Add this near the top of your routes
+app.use((req, res, next) => {
+  console.log(`Received ${req.method} request for ${req.url}`);
+  next();
+});
+
 // Serve HTML pages
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -136,6 +142,12 @@ app.post('/openRequest', async (req, res) => {
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal server error', details: err.message });
+});
+
+// Add a catch-all route at the end
+app.use('*', (req, res) => {
+  console.log(`Catch-all route hit for ${req.url}`);
+  res.status(404).json({ error: 'Not Found' });
 });
 
 // If you're using Vercel, you might need to export the app differently
