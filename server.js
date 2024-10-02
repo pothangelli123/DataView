@@ -3,6 +3,7 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const path = require('path');
 const xml2js = require('xml2js');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,6 +12,10 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use(cors({
+  origin: process.env.VERCEL ? 'https://dataviewssfmc.vercel.app' : 'http://localhost:3000',
+  credentials: true
+}));
 
 // Serve HTML pages
 app.get('/', (req, res) => {
@@ -29,7 +34,15 @@ app.get('/dataViews', (req, res) => {
 app.post('/login', async (req, res) => {
   const { clientId, clientSecret, subdomain } = req.body;
 
+  console.log('Login attempt received:', { subdomain, clientId: clientId.slice(0, 5) + '...' });
+
+  if (!clientId || !clientSecret || !subdomain) {
+    console.error('Missing required fields for login');
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
   try {
+    console.log(`Attempting login for subdomain: ${subdomain}`);
     const response = await axios.post(`https://${subdomain}.auth.marketingcloudapis.com/v2/token`, {
       grant_type: 'client_credentials',
       client_id: clientId,
@@ -37,9 +50,15 @@ app.post('/login', async (req, res) => {
     });
 
     const accessToken = response.data.access_token;
+    console.log('Access token generated successfully');
     res.json({ accessToken });
   } catch (error) {
-    res.status(400).json({ error: 'Authentication failed' });
+    console.error('Authentication failed:', error.response ? JSON.stringify(error.response.data) : error.message);
+    res.status(400).json({ 
+      error: 'Authentication failed', 
+      details: error.response ? error.response.data : error.message,
+      stack: error.stack
+    });
   }
 });
 
@@ -112,12 +131,19 @@ app.post('/openRequest', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch bounce data', details: error.message });
     }
   });
-  
 
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Add a catch-all error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal server error', details: err.message });
 });
 
-// At the end of your server.js file, add:
-module.exports = app;
+// If you're using Vercel, you might need to export the app differently
+if (process.env.VERCEL) {
+  console.log('Running in Vercel environment');
+  module.exports = app;
+} else {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
