@@ -9,9 +9,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public'));
 app.use(cors({
   origin: process.env.VERCEL ? 'https://dataviewssfmc.vercel.app' : 'http://localhost:3000',
   credentials: true
