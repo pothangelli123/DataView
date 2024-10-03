@@ -13,10 +13,13 @@ async function fetchBounceData(subdomain, accessToken) {
               <Properties>Client.ID</Properties>
               <Properties>TriggeredSendDefinitionObjectID</Properties>
               <Properties>SendID</Properties>
+              <Properties>ObjectID</Properties>
               <Properties>SubscriberKey</Properties>
               <Properties>EventDate</Properties>
               <Properties>EventType</Properties>
               <Properties>BatchID</Properties>
+              <Properties>BounceCategory</Properties>
+              <Properties>SMTPCode</Properties>
             </RetrieveRequest>
           </RetrieveRequestMsg>
         </s:Body>
@@ -46,5 +49,48 @@ async function fetchBounceData(subdomain, accessToken) {
     } catch (error) {
         console.error('Error fetching bounce data:', error);
         throw error;
+    }
+}
+
+function displayBounceData(data) {
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
+
+    if (data && data.length > 0) {
+        // Add this new container div
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'table-container';
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // Create table header
+        const headerRow = document.createElement('tr');
+        Object.keys(data[0]).forEach(key => {
+            const th = document.createElement('th');
+            th.textContent = key;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Create table body
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            Object.values(item).forEach(value => {
+                const td = document.createElement('td');
+                td.textContent = value;
+                row.appendChild(td);
+            });
+            tbody.appendChild(row);
+        });
+        table.appendChild(tbody);
+
+        // Append the table to the container instead of directly to resultsDiv
+        tableContainer.appendChild(table);
+        resultsDiv.appendChild(tableContainer);
+    } else {
+        resultsDiv.innerHTML = 'No bounce data available.';
     }
 }

@@ -70,3 +70,38 @@ th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
+
+/* Add these new styles */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    min-width: 100%;
+    width: auto;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.table-wrapper th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+}

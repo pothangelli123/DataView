@@ -42,7 +42,9 @@ async function fetchDataView(dataView) {
         if (dataView === 'Bounce') {
             data = await fetchBounceData(subdomain, accessToken);
         }else if(dataView==='Open') {
-            data=await fetchOpenData(subdomain,accessToken)
+            data = await fetchOpenData(subdomain,accessToken);
+        }else if(dataView==='Click') {
+            data = await fetchClickData(subdomain,accessToken);
         }
         else {
             const response = await fetch('/soapRequest', {
@@ -80,6 +82,10 @@ function displayResults(data, dataView) {
         const results = data['soap:Envelope']['soap:Body']['RetrieveResponseMsg']['Results'];
         
         if (Array.isArray(results)) {
+            // Create a wrapper div for the table
+            const tableWrapper = document.createElement('div');
+            tableWrapper.className = 'table-wrapper';
+            
             const table = document.createElement('table');
             const headerRow = table.insertRow();
             
@@ -99,7 +105,9 @@ function displayResults(data, dataView) {
                 });
             });
 
-            resultContainer.appendChild(table);
+            // Append the table to the wrapper, then the wrapper to the container
+            tableWrapper.appendChild(table);
+            resultContainer.appendChild(tableWrapper);
         } else {
             resultContainer.textContent = 'No results found.';
         }
