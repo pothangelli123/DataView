@@ -172,6 +172,75 @@ app.post('/openRequest', async (req, res) => {
     }
   });
 
+
+  app.post('/sentRequest', async (req, res) => {
+    const { subdomain, accessToken, soapEnvelope } = req.body;
+  
+    try {
+      const response = await axios.post(
+        `https://${subdomain}.soap.marketingcloudapis.com/Service.asmx`,
+        soapEnvelope,
+        {
+          headers: {
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'SOAPAction': 'Retrieve'
+          }
+        }
+      );
+  
+      console.log('SOAP response:', response.data);
+  
+      const parser = new xml2js.Parser({ explicitArray: false });
+      const parsedData = await parser.parseStringPromise(response.data);
+  
+      // Check if there is a SOAP fault
+      if (parsedData['soap:Envelope']['soap:Body']['soap:Fault']) {
+        const fault = parsedData['soap:Envelope']['soap:Body']['soap:Fault'];
+        console.error('SOAP Fault:', fault);
+        res.status(400).json({ error: `SOAP Fault: ${fault.faultstring}` });
+      } else {
+        res.json(parsedData);
+      }
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      res.status(500).json({ error: 'Failed to fetch sent data', details: error.message });
+    }
+  });
+
+  app.post('/unSubEventRequest', async (req, res) => {
+    const { subdomain, accessToken, soapEnvelope } = req.body;
+  
+    try {
+      const response = await axios.post(
+        `https://${subdomain}.soap.marketingcloudapis.com/Service.asmx`,
+        soapEnvelope,
+        {
+          headers: {
+            'Content-Type': 'text/xml;charset=UTF-8',
+            'SOAPAction': 'Retrieve'
+          }
+        }
+      );
+  
+      console.log('SOAP response:', response.data);
+  
+      const parser = new xml2js.Parser({ explicitArray: false });
+      const parsedData = await parser.parseStringPromise(response.data);
+  
+      // Check if there is a SOAP fault
+      if (parsedData['soap:Envelope']['soap:Body']['soap:Fault']) {
+        const fault = parsedData['soap:Envelope']['soap:Body']['soap:Fault'];
+        console.error('SOAP Fault:', fault);
+        res.status(400).json({ error: `SOAP Fault: ${fault.faultstring}` });
+      } else {
+        res.json(parsedData);
+      }
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error.message);
+      res.status(500).json({ error: 'Failed to fetch unSubEvent data', details: error.message });
+    }
+  });
+
 // Add a catch-all error handler
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);

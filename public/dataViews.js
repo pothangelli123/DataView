@@ -45,6 +45,10 @@ async function fetchDataView(dataView) {
             data = await fetchOpenData(subdomain,accessToken);
         }else if(dataView==='Click') {
             data = await fetchClickData(subdomain,accessToken);
+        }else if(dataView==='Sent') {
+            data = await fetchsentData(subdomain,accessToken);
+        }else if(dataView==='BusinessUnitUnsubscribes') {
+            data = await fetchUnsubEventData(subdomain,accessToken);
         }
         else {
             const response = await fetch('/soapRequest', {
