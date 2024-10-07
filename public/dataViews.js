@@ -47,8 +47,14 @@ async function fetchDataView(dataView) {
             data = await fetchClickData(subdomain,accessToken);
         }else if(dataView==='Sent') {
             data = await fetchsentData(subdomain,accessToken);
-        }else if(dataView==='BusinessUnitUnsubscribes') {
+        }else if(dataView==='BusinessUnitUnsubscribes' || dataView==='Unsubscribe') {
             data = await fetchUnsubEventData(subdomain,accessToken);
+        }else if(dataView==='Subscribers'){
+            data= await fetchSubscribeData(subdomain,accessToken);
+        }else if (dataView==='ListSubscribers'){
+            data = await fetchListSubscribeData(subdomain,accessToken);
+        }else if(dataView==='PublicationSubscriber'){
+            data = await fetchPublicationData(subdomain, accessToken);
         }
         else {
             const response = await fetch('/soapRequest', {
